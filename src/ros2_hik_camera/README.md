@@ -15,3 +15,4 @@ ros2 launch hik_camera hik_camera.launch.py
 
 你好
 nihao 
+我现在不是gay了
