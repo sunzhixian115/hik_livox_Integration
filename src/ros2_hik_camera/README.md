@@ -14,3 +14,4 @@ ros2 launch hik_camera hik_camera.launch.py
 - gain
 
 你好
+nihao 
