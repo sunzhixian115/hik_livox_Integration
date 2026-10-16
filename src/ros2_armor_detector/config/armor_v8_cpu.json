@@ -1,0 +1,10 @@
+{
+  "armor_v8": {
+    "xml": "Infantry-v8n-fp16-20260726-D1.8w-B16/Infantry-v8n-fp16-20260726-D1.8w-B16.xml",
+    "infer_mode": "sync",
+    "deploy_way": "openvino",
+    "postprocess_mode": "auto",
+    "device": "CPU",
+    "score_threshold": 0.5
+  }
+}
