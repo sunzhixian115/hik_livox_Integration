@@ -6,9 +6,13 @@ projector:
     intrinsic_path: '/home/szx/works/hik_livox_workspace/src/livox_pcd_projection/config/intrinsic.txt'
     extrinsic_path: '/home/szx/works/hik_livox_workspace/src/livox_pcd_projection/config/extrinsic.txt'
     lidar_threshold: 100000
-    refresh_rate: 30
+    refresh_rate: 10
     debug: True
     bbox_size: 0.8
+    debug_max_points: 10000
+    max_data_age: 0.2
+    image_width: 1440
+    image_height: 1080
 
 stamper: 
   ros__parameters:

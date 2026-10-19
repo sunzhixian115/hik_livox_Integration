@@ -8,6 +8,13 @@
   <license>MIT</license>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
+  <depend>rclcpp</depend>
+  <depend>livox_interfaces</depend>
+  <depend>vision_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>dist_msg</depend>
+  <depend>cv_bridge</depend>
+  <depend>libopencv-dev</depend>
   <exec_depend>launch</exec_depend>
   <exec_depend>launch_ros</exec_depend>
   <exec_depend>hik_camera</exec_depend>

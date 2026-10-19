@@ -10,6 +10,8 @@
 
 #include <algorithm>
 #include <cmath>
+#include <cstdlib>
+#include <chrono>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -33,6 +35,12 @@ public:
         const std::string debug_topic = declare_parameter("debug_topic", "/armor_debug");
         my_color_ = declare_parameter("my_color", 2);
         publish_debug_ = declare_parameter("publish_debug", true);
+        cv::setNumThreads(1);
+        const int cpu_threads = declare_parameter("cpu_threads", 4);
+        if (cpu_threads < 0)
+            throw std::invalid_argument("cpu_threads must be non-negative");
+        const auto threads_value = std::to_string(cpu_threads);
+        setenv("NNDEPLOYMENT_CPU_THREADS", threads_value.c_str(), 1);
 
         RCLCPP_INFO(get_logger(), "model config: %s", model_config.c_str());
         RCLCPP_INFO(get_logger(), "model root: %s", model_root.c_str());
@@ -53,7 +61,7 @@ public:
 
         image_subscription_ = create_subscription<sensor_msgs::msg::Image>(
             input_topic,
-            rclcpp::SensorDataQoS(),
+            rclcpp::SensorDataQoS().keep_last(1),
             std::bind(&ArmorDetectorNode::imageCallback, this, std::placeholders::_1));
     }
 
@@ -62,10 +70,15 @@ private:
     {
         try
         {
+            const auto started = std::chrono::steady_clock::now();
             const cv_bridge::CvImageConstPtr cv_image =
                 cv_bridge::toCvShare(message, sensor_msgs::image_encodings::BGR8);
             const std::vector<NetArmorResult> results =
                 model_->netProcess(cv_image->image, my_color_);
+            const double inference_ms = std::chrono::duration<double, std::milli>(
+                std::chrono::steady_clock::now() - started).count();
+            RCLCPP_INFO_THROTTLE(get_logger(), *get_clock(), 5000,
+                "image conversion + model: %.2f ms, detections=%zu", inference_ms, results.size());
 
             vision_msgs::msg::Detection2DArray detections;
             detections.header = message->header;

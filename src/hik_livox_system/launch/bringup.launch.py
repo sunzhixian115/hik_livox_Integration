@@ -100,20 +100,26 @@ def generate_launch_description():
         ),
 
         Node(
-            package='livox_pcd_projection',
-            executable='stamper',
+            package='hik_livox_system',
+            executable='stamper_cpp',
             name='stamper',
             output='screen',
             parameters=[projection_config],
         ),
         Node(
-            package='livox_pcd_projection',
-            executable='projector',
+            package='hik_livox_system',
+            executable='projector_cpp',
             name='projector',
             output='screen',
             parameters=[
                 projection_config,
-                {'debug': LaunchConfiguration('projection_debug')},
+                {
+                    'debug': LaunchConfiguration('projection_debug'),
+                    'max_data_age': 0.5,
+                    'debug_max_points': 5000,
+                    'debug_scale': 0.5,
+                    'debug_rate': 10.0,
+                },
             ],
         ),
 

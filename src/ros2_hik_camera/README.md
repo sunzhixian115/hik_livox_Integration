@@ -13,6 +13,3 @@ ros2 launch hik_camera hik_camera.launch.py
 - exposure_time
 - gain
 
-你好
-nihao 
-我现在不是gay了

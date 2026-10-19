@@ -3,6 +3,7 @@
 #include <opencv2/imgproc.hpp>
 
 #include <cmath>
+#include <cstdlib>
 #include <iostream>
 
 // ==================== 推理引擎模块 ====================
@@ -111,6 +112,20 @@ OpenVINOEngine::OpenVINOEngine(const YOLOModel::ModelConfig &model_config, const
             ? ov::hint::PerformanceMode::LATENCY
             : ov::hint::PerformanceMode::THROUGHPUT;
     compile_config[ov::hint::performance_mode.name()] = performance_mode;
+    // Optional process-level override for CPU resource sharing with camera/lidar nodes.
+    if (m_model_config.device == "CPU")
+    {
+        if (const char *value = std::getenv("NNDEPLOYMENT_CPU_THREADS"))
+        {
+            const int threads = std::stoi(value);
+            if (threads > 0)
+            {
+                compile_config["INFERENCE_NUM_THREADS"] = threads;
+                compile_config["NUM_STREAMS"] = 1;
+                compile_config["SCHEDULING_CORE_TYPE"] = ov::hint::SchedulingCoreType::ANY_CORE;
+            }
+        }
+    }
     if (m_model_config.device == "GPU")
     {
         compile_config["GPU_ENABLE_LOOP_UNROLLING"] = "NO"; // GPU优化配置
